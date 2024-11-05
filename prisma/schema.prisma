@@ -1,0 +1,60 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+generator erd {
+  provider = "prisma-erd-generator"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Transaction {
+  id            String                   @id @default(uuid())
+  name          String
+  type          TransactionType
+  amount        Decimal                  @db.Decimal(10, 2)
+  category      TransactionCategory
+  paymentmethod TransactionPaymentMethod
+  date          DateTime
+  created_at    DateTime                 @default(now())
+  updated_at    DateTime                 @updatedAt
+
+  @@map("transaction")
+}
+
+enum TransactionType {
+  DEPOSIT
+  EXPENSE
+  INVESTMENT
+
+  @@map("transactiontype")
+}
+
+enum TransactionCategory {
+  HOUSING
+  TRANSPORTATION
+  FOOD
+  ENTRATAIMENT
+  HEALTH
+  UTILITY
+  SALARY
+  EDUCATION
+  OTHER
+
+  @@map("transactioncategory")
+}
+
+enum TransactionPaymentMethod {
+  CREDIT_CARD
+  DEBIT_CARD
+  BANK_TRANSFER
+  BANK_SLIP
+  CASH
+  PIX
+  OTHER
+
+  @@map("transactionpaymentmethod")
+}
