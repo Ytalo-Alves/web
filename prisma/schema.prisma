@@ -21,6 +21,7 @@ model Transaction {
   date          DateTime
   created_at    DateTime                 @default(now())
   updated_at    DateTime                 @updatedAt
+  userId        String
 
   @@map("transaction")
 }
