@@ -42,10 +42,12 @@ import {
 } from "../_constants/transactions";
 import { DatePicker } from "./ui/date-picker";
 import { DialogClose } from "@radix-ui/react-dialog";
+import { addTransaction } from "../_actions/_add-transaction";
+import { useState } from "react";
 
 const formSchema = z.object({
   name: z.string().trim().min(1, "O nome é obrigatório"),
-  amount: z.string().trim().min(1, "O Valor é obrigatório"),
+  amount: z.number({required_error: 'O valor é obrigatório'}).positive(),
   type: z.nativeEnum(TransactionType, {
     required_error: "O tipo é obrigatório",
   }),
@@ -61,11 +63,14 @@ const formSchema = z.object({
 type FormSchema = z.infer<typeof formSchema>;
 
 const AddTransactionButton = () => {
+  const [dialogIsOpen, setDialogIsOpen] = useState(false)
+
+
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
-      amount: "",
+      amount: 0,
       category: TransactionCategory.OTHER,
       type: TransactionType.EXPENSE,
       paymentMethod: TransactionPaymentMethod.CASH,
@@ -73,13 +78,21 @@ const AddTransactionButton = () => {
     },
   });
 
-  const onSubmit = (data: FormSchema) => {
-    console.log({ data });
+  const onSubmit = async (data: FormSchema) => {
+    try {
+      await addTransaction(data)
+      setDialogIsOpen(false)
+      form.reset()
+    } catch (error) {
+      console.log(error)
+    }
   };
 
   return (
     <Dialog
+    open={dialogIsOpen}
       onOpenChange={(open) => {
+        setDialogIsOpen(open);
         if (!open) {
           form.reset();
         }
@@ -118,7 +131,7 @@ const AddTransactionButton = () => {
                 <FormItem>
                   <FormLabel>Valor</FormLabel>
                   <FormControl>
-                    <MoneyInput placeholder="R$ 0.000,00" {...field} />
+                    <MoneyInput placeholder="Digite um valor..." value={field.value} onValueChange={({floatValue}) => field.onChange(floatValue)} onBlur={field.onBlur} disabled={field.disabled} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
