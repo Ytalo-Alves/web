@@ -5,7 +5,8 @@ import TimeSelect from "./(home)/_components/time-select";
 import { isMatch } from "date-fns";
 import TransactionPieChart from "./(home)/_components/transaction-pie-chart";
 import Navbar from "./_components/navbar";
-import { GetDashbord } from "./_data/get-dashboard";
+import ExpensePerCategory from "./(home)/_components/expenes-per-category";
+import { Dashboard } from "./_data/get-dashboard";
 
 interface HomeProps {
   searchParams: { month: string };
@@ -22,7 +23,7 @@ const Home = async ({ searchParams: { month } }: HomeProps) => {
       redirect('?month=01');
     }
 
-    const dashboard = await GetDashbord(month)
+    const dashboard = await Dashboard(month)
 
   return (
     <>
@@ -37,6 +38,7 @@ const Home = async ({ searchParams: { month } }: HomeProps) => {
             <SummaryCards month={month} {...dashboard}/>
             <div className="grid h-full grid-cols-3 grid-rows-1 gap-6 overflow-hidden">
               <TransactionPieChart {...dashboard} />
+              <ExpensePerCategory expensesPerCategory={dashboard.totalExpensePerCategory}/>
             </div>
           </div>
         </div>
