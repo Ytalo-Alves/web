@@ -7,6 +7,7 @@ import TransactionPieChart from "./(home)/_components/transaction-pie-chart";
 import Navbar from "./_components/navbar";
 import ExpensePerCategory from "./(home)/_components/expenes-per-category";
 import { Dashboard } from "./_data/get-dashboard";
+import LastTransactions from "./(home)/_components/last-transactions";
 
 interface HomeProps {
   searchParams: { month: string };
@@ -19,11 +20,11 @@ const Home = async ({ searchParams: { month } }: HomeProps) => {
   }
 
   const monthIsInvalid = !month || !isMatch(month, "MM");
-    if(monthIsInvalid){
-      redirect('?month=01');
-    }
+  if (monthIsInvalid) {
+    redirect("?month=01");
+  }
 
-    const dashboard = await Dashboard(month)
+  const dashboard = await Dashboard(month);
 
   return (
     <>
@@ -35,12 +36,15 @@ const Home = async ({ searchParams: { month } }: HomeProps) => {
         </div>
         <div className="grid h-full grid-cols-[2fr,1fr] gap-6 overflow-hidden">
           <div className="flex flex-col gap-6 overflow-hidden">
-            <SummaryCards month={month} {...dashboard}/>
+            <SummaryCards month={month} {...dashboard} />
             <div className="grid h-full grid-cols-3 grid-rows-1 gap-6 overflow-hidden">
               <TransactionPieChart {...dashboard} />
-              <ExpensePerCategory expensesPerCategory={dashboard.totalExpensePerCategory}/>
+              <ExpensePerCategory
+                expensesPerCategory={dashboard.totalExpensePerCategory}
+              />
             </div>
           </div>
+          <LastTransactions lastTransactions={dashboard.lastTransactions} />
         </div>
       </div>
     </>

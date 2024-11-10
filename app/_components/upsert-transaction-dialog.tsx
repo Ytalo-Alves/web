@@ -28,6 +28,8 @@ import {
 } from "./ui/select";
 import {
   TRANSACTION_CATEGORY_OPTIONS,
+  TRANSACTION_PAYMENT_METHOD_LABELS,
+  TRANSACTION_PAYMENT_METHOD_OPTIONS,
   TRANSACTION_TYPE_OPTIONS,
 } from "../_constants/transactions";
 import { DatePicker } from "./ui/date-picker";
@@ -62,8 +64,8 @@ type FormSchema = z.infer<typeof formSchema>;
 interface UpsertTransactionDialogProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
-  transactionId?: string,
-  defaultValue?: FormSchema
+  transactionId?: string;
+  defaultValue?: FormSchema;
 }
 
 const UpsertTransactionDialog = ({
@@ -86,7 +88,7 @@ const UpsertTransactionDialog = ({
 
   const onSubmit = async (data: FormSchema) => {
     try {
-      await addTransaction({...data, id: transactionId});
+      await addTransaction({ ...data, id: transactionId });
       setIsOpen(false);
       form.reset();
     } catch (error) {
@@ -94,7 +96,7 @@ const UpsertTransactionDialog = ({
     }
   };
 
-  const isUpdate = Boolean(transactionId)
+  const isUpdate = Boolean(transactionId);
 
   return (
     <Dialog
@@ -110,9 +112,9 @@ const UpsertTransactionDialog = ({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
-            {isUpdate ? 'Alterar transação' : 'Adicionar transações'}
+            {isUpdate ? "Alterar transação" : "Adicionar transações"}
           </DialogTitle>
-          </DialogHeader>
+        </DialogHeader>
         <DialogDescription>Insira as informações abaixo</DialogDescription>
 
         <Form {...form}>
@@ -165,11 +167,39 @@ const UpsertTransactionDialog = ({
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select a verified email to display" />
+                        <SelectValue placeholder="Seleciona o tipo de Transação" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
                       {TRANSACTION_TYPE_OPTIONS.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="paymentMethod"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Método de pagamento</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Seleciona o tipo de pagamento" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {TRANSACTION_PAYMENT_METHOD_OPTIONS.map((option) => (
                         <SelectItem key={option.value} value={option.value}>
                           {option.label}
                         </SelectItem>
@@ -228,7 +258,7 @@ const UpsertTransactionDialog = ({
                 </Button>
               </DialogClose>
               <Button type="submit" variant="default">
-                {isUpdate ? 'Alterar' : 'Adicionar'}
+                {isUpdate ? "Alterar" : "Adicionar"}
               </Button>
             </DialogFooter>
           </form>
